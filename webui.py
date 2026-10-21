@@ -362,7 +362,7 @@ def update_prompt_text(dialect_key: str, example_key: str):
 
 
 def render_interface() -> gr.Blocks:
-    with gr.Blocks(title="SoulX-Podcast", theme=gr.themes.Default()) as page:
+    with gr.Blocks(title="Easy-Podcast", theme=gr.themes.Default()) as page:
 
         with gr.Row():
             lang_choice = gr.Radio(
@@ -623,7 +623,7 @@ if __name__ == "__main__":
     random.seed(args.seed)
 
     initiate_model(config)
-    print("[INFO] SoulX-Podcast loaded")    
+    print("[INFO] Easy-Podcast loaded (engine: SoulX-Podcast)")    
     page = render_interface()
     page.queue()
     page.launch(share=False, server_name="0.0.0.0", server_port=args.port)

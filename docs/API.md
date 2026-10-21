@@ -1,4 +1,4 @@
-# SoulX-Podcast 服务 API
+# Easy-Podcast 服务 API（基于 [SoulX-Podcast](https://github.com/Soul-AILab/SoulX-Podcast)）
 
 ComfyUI 风格的任务式 API：`POST /prompt` 提交 → `GET /prompt/{task_id}` 轮询 → `/view` 取音频。
 **生成完成后显存按策略自动释放**（默认空闲 120 秒卸载全部模型权重）。

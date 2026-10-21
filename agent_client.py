@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""SoulX-Podcast agent client — zero-dependency (Python stdlib only).
+"""Easy-Podcast agent client — zero-dependency (Python stdlib only).
 
-For agents/scripts to call the SoulX-Podcast service easily.
+For agents/scripts to call the Easy-Podcast service (powered by SoulX-Podcast) easily.
 
 Usage:
   # Generate a podcast (blocking until audio is ready, prints wav path)
@@ -178,7 +178,7 @@ def cmd_simple(args):
 
 
 def build_parser():
-    p = argparse.ArgumentParser(description="SoulX-Podcast API client")
+    p = argparse.ArgumentParser(description="Easy-Podcast API client (powered by SoulX-Podcast)")
     sub = p.add_subparsers(dest="command", required=True)
 
     g = sub.add_parser("generate", help="submit a podcast/tts generation task")

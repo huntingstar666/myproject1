@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""SoulX-Podcast HTTP service (ComfyUI-style API + built-in web UI).
+"""Easy-Podcast HTTP service (ComfyUI-style API + built-in web UI).
+
+Based on SoulX-Podcast: https://github.com/Soul-AILab/SoulX-Podcast
 
 Endpoints:
   GET  /                  web UI (single page)
@@ -75,8 +77,8 @@ manager = ModelManager(
     vram_idle_seconds=float(os.environ.get("SOULX_VRAM_IDLE_SECONDS", "120")),
 )
 
-app = FastAPI(title="SoulX-Podcast API", version="1.0.0",
-              description="Podcast-grade TTS with VRAM auto-release. "
+app = FastAPI(title="Easy-Podcast API", version="1.0.0",
+              description="Podcast-grade TTS with VRAM auto-release, powered by SoulX-Podcast. "
                           "Submit via POST /prompt, poll via GET /prompt/{task_id}.")
 
 

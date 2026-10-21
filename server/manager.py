@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""SoulX-Podcast model manager.
+"""Easy-Podcast model manager.
+
+Wraps the SoulX-Podcast engine (https://github.com/Soul-AILab/SoulX-Podcast).
 
 Responsibilities:
 - Lazy model loading (base / dialect models, loaded on demand)

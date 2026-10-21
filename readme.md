@@ -1,195 +1,120 @@
 <div align="center">
     <h1>
-    SoulX-Podcast
+    🎙️ Easy-Podcast
     </h1>
     <p>
-    Official inference code for <br>
-    <b><em>SoulX-Podcast: Towards Realistic Long-form Podcasts with Dialectal and Paralinguistic Diversity</em></b>
+    <b>开箱即用的播客级语音合成服务</b><br>
+    一行命令启动 Web 服务 · 多说话人播客生成 · 方言克隆 · 副语言控制<br>
+    <sub>基于 <a href="https://github.com/Soul-AILab/SoulX-Podcast">SoulX-Podcast</a> 构建的二次开发项目</sub>
     </p>
     <p>
-    <!-- <img src="assets/XiaoHongShu_Logo.png" alt="Institution 4" style="width: 102px; height: 48px;"> -->
-    <img src="assets/SoulX-Podcast-log.jpg" alt="SoulX-Podcast_Logo" style="width: 200px; height: 68px;">
+    <a href="https://github.com/huntingstar666/easy-podcast"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+    <a href="https://github.com/Soul-AILab/SoulX-Podcast"><img src="https://img.shields.io/badge/Powered%20by-SoulX--Podcast-7c5cff" alt="Powered by"></a>
+    <img src="https://img.shields.io/badge/Python-3.11+-green" alt="Python">
+    <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey" alt="Platform">
     </p>
-    <p>
-    </p>
-    <a href="https://soul-ailab.github.io/soulx-podcast/"><img src="https://img.shields.io/badge/Demo-Page-lightgrey" alt="version"></a>
-    <a href="https://huggingface.co/collections/Soul-AILab/soulx-podcast"><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue' alt="HF-model"></a>
-    <a href="https://arxiv.org/pdf/2510.23541"><img src='https://img.shields.io/badge/Report-Github?label=Technical&color=red' alt="technical report"></a>
-    <a href="https://huggingface.co/Soul-AILab/spaces"><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue' alt="HF-demo"></a>
-    <a href="https://github.com/Soul-AILab/SoulX-Podcast"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="Apache-2.0"></a>
 </div>
 
+**English** | [简体中文](#-easy-podcast-1)
 
-<p align="center">
-   <h1>SoulX-Podcast: Towards Realistic Long-form Podcasts with Dialectal and Paralinguistic Diversity</h1>
-<p>
+Easy-Podcast is an out-of-the-box podcast-grade speech synthesis service built on top of [SoulX-Podcast](https://github.com/Soul-AILab/SoulX-Podcast). It wraps the powerful SoulX-Podcast engine with a task-style HTTP API, a built-in web workbench, a Gradio WebUI and CLI tools, so you can deploy podcast generation in minutes.
 
-##  Overview
-SoulX-Podcast is designed for podcast-style multi-turn, multi-speaker dialogic speech generation, while also achieving superior performance in the conventional monologue TTS task.
+---
 
-To meet the higher naturalness demands of multi-turn spoken dialogue, SoulX-Podcast integrates a range of paralinguistic controls and supports both Mandarin and English, as well as several Chinese dialects, including Sichuanese, Henanese, and Cantonese, enabling more personalized podcast-style speech generation.
+## ✨ 项目简介
 
+Easy-Podcast 让 [SoulX-Podcast](https://github.com/Soul-AILab/SoulX-Podcast) 的播客语音生成能力更容易用：
 
-## Key Features 🔥
+- **Web 工作台**：浏览器里管理说话人、编辑多轮对话脚本、试听与下载，无需写代码
+- **任务式 HTTP API**：`POST /prompt` 提交 → `GET /prompt/{task_id}` 轮询 → `/view` 取音频，ComfyUI 风格，方便脚本与 Agent 调用
+- **显存自动管理**：空闲 N 秒后自动卸载模型权重（策略可配），单卡也能稳跑
+- **零依赖客户端**：`agent_client.py` 仅用 Python 标准库，任何环境都能直接调服务
+- **一键下载模型**：`download_models.py` 自动从 Hugging Face（含镜像加速）拉取基础/方言模型
 
-- **Long-form, multi-turn, multi-speaker dialogic speech generation**: SoulX-Podcast excels in generating high-quality, natural-sounding dialogic speech for multi-turn, multi-speaker scenarios.
+底层模型能力（来自 SoulX-Podcast）：
 
-- **Cross-dialectal, zero-shot voice cloning**: SoulX-Podcast supports zero-shot voice cloning across different Chinese dialects, enabling the generation of high-quality, personalized speech in any of the supported dialects.
+- 长篇、多轮、多说话人对话式语音生成，同时支持单说话人朗读（TTS）
+- 跨方言零样本音色克隆：普通话、四川话、河南话、粤语、英语
+- 副语言控制：`<|laughter|>`、`<|sigh|>`、`<|breathing|>`、`<|coughing|>`、`<|throat_clearing|>`
 
-- **Paralinguistic controls**: SoulX-Podcast supports a variety of paralinguistic events, as as ***laugher*** and ***sighs*** to enhance the realism of synthesized results.
-- **Paralinguistic tags**: <|laughter|>, <|sigh|>, <|breathing|>, <|coughing|>, <|throat_clearing|> .
+## 🚀 快速开始
 
-<table align="center">
-  <tr>
-    <td align="center"><br><img src="assets/performance_radar.png" width="80%" /></td>
-  </tr>
-</table>
+### 1. 安装环境
 
+```bash
+git clone https://github.com/huntingstar666/easy-podcast.git
+cd easy-podcast
 
-## Demo Examples
-
-**Zero-Shot Podcast Generation**
-<div align="center">
-
-<https://github.com/user-attachments/assets/a9d3da2a-aaff-49d0-a3c7-2bd3c0b6d5eb>
-
-</div>
-
-
-**Cross-Dialectal Zero-Shot Podcast Generation**
-
-🎙️ All prompt audio samples used in the following generations are in Mandarin.
-
-🎙️ 以下音频生成采用的参考音频全部为普通话。
-
-<div align="center">
-
-<https://github.com/user-attachments/assets/982d799b-9f91-40a3-ab64-9e165166f788>
-
-</div>
-<div align="center">
-
-<https://github.com/user-attachments/assets/d0a59d7b-27c9-4b47-8242-f7630814c1e9>
-
-</div>
-
-<div align="center">
-
-<https://github.com/user-attachments/assets/a53ff35c-1e2b-42d9-9ef4-279164574646>
-
-</div>
-
-For more examples, see [demo page](https://soul-ailab.github.io/soulx-podcast/).
-
-
-## 🚀 News
-- **[2025-11-03]** Support vllm with docker.
-- **[2025-10-31]** Deploy an online demo on [Hugging Face Spaces](https://huggingface.co/Soul-AILab/spaces).
-
-- **[2025-10-30]** Add example scripts for monologue TTS and support a WebUI for easy inference.
-
-- **[2025-10-29]** We are excited to announce that the latest SoulX-Podcast checkpoint is now available on Hugging Face! You can access it directly from [SoulX-Podcast-hugging-face](https://huggingface.co/collections/Soul-AILab/soulx-podcast).
-
-- **[2025-10-28]** Our paper on this project has been published! You can read it here: [SoulX-Podcast](https://arxiv.org/pdf/2510.23541).
-
-## Install
-
-### Clone and Install
-Here are instructions for installing on Linux.
-- Clone the repo
-```
-git clone git@github.com:Soul-AILab/SoulX-Podcast.git
-cd SoulX-Podcast
-```
-- Install Conda: please see https://docs.conda.io/en/latest/miniconda.html
-- Create Conda env:
-```
-conda create -n soulxpodcast -y python=3.11
-conda activate soulxpodcast
+conda create -n easy-podcast -y python=3.11
+conda activate easy-podcast
 pip install -r requirements.txt
-# If you are in mainland China, you can set the mirror as follows:
+# 中国大陆可使用镜像加速：
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com
 ```
-- [Optional] VLLM accleration(Modified version from vllm 0.10.1)
-```
-cd runtime/vllm
-docker build -t soulxpodcast:v1.0 .
-# Mounts the host directory at LOCAL_RESOURCE_PATH to CONTAINER_RESOURCE_PATH in the container, enabling file sharing between the host system and container. To access the web application, add -p LOCAL_PORT:CONTAINER_PORT
-# example: docker run -it --runtime=nvidia  --name soulxpodcast  -v /mnt/data:/mnt/data -p 7860:7860 soulxpodcast:v1.0
-docker run -it --runtime=nvidia  --name soulxpodcast  -v LOCAL_RESOURCE_PATH:CONTAINER_RESOURCE_PATH soulxpodcast:v1.0
+
+### 2. 下载模型
+
+```bash
+python download_models.py          # 自动下载基础模型与方言模型
 ```
 
-### Model Download
+或手动下载（需要 [huggingface_hub](https://huggingface.co/docs/huggingface_hub)）：
 
-```sh
-pip install -U huggingface_hub
-
-# base model
+```bash
 huggingface-cli download --resume-download Soul-AILab/SoulX-Podcast-1.7B --local-dir pretrained_models/SoulX-Podcast-1.7B
-
-# dialectal model
 huggingface-cli download --resume-download Soul-AILab/SoulX-Podcast-1.7B-dialect --local-dir pretrained_models/SoulX-Podcast-1.7B-dialect
 ```
 
+### 3. 启动服务（推荐）
 
-Download via python:
-```python
-from huggingface_hub import snapshot_download
-
-# base model
-snapshot_download("Soul-AILab/SoulX-Podcast-1.7B", local_dir="pretrained_models/SoulX-Podcast-1.7B") 
-
-# dialectal model
-snapshot_download("Soul-AILab/SoulX-Podcast-1.7B-dialect", local_dir="pretrained_models/SoulX-Podcast-1.7B-dialect") 
-
+```bash
+python run_server.py                        # Web 工作台 + API，默认 http://localhost:8000
+python run_server.py --vram_idle_seconds 0  # 每次生成完立即释放显存
+python run_server.py --vram_idle_seconds -1 # 模型常驻不释放
 ```
 
-Download via git clone:
-```sh
-mkdir -p pretrained_models
+启动后：
 
-# Make sure you have git-lfs installed (https://git-lfs.com)
-git lfs install
+- **Web 工作台**：`http://localhost:8000/`
+- **Swagger 文档**：`http://localhost:8000/docs`
+- **API 详细说明**：见 [docs/API.md](docs/API.md)
 
-# base model
-git clone https://huggingface.co/Soul-AILab/SoulX-Podcast-1.7B pretrained_models/SoulX-Podcast-1.7B
+### 4. 其他使用方式
 
-# dialectal model
-git clone https://huggingface.co/Soul-AILab/SoulX-Podcast-1.7B-dialect pretrained_models/SoulX-Podcast-1.7B-dialect
-```
+```bash
+# Gradio WebUI
+python webui.py --model_path pretrained_models/SoulX-Podcast-1.7B
 
-
-### Basic Usage
-
-You can simply run the demo with the following commands:
-``` sh
-# dialectal inference
+# 命令行播客推理
 bash example/infer_dialogue.sh
+
+# 命令行单句 TTS
+python cli/tts.py --help
+
+# 让 Agent / 脚本调用服务（仅标准库）
+python agent_client.py generate --text "[S1]你好[S2]大家好" --wait --help
 ```
 
-### WebUI
+完整 API 参数（说话人配置、方言克隆、采样参数、显存策略等）请看 [docs/API.md](docs/API.md)。
 
-You can simply run the webui with the following commands:
-``` sh
-# Base Model:
-python3 webui.py --model_path pretrained_models/SoulX-Podcast-1.7B
+## 🙏 致谢
 
-# If you want to experience dialect podcast generation, use the dialectal model:
-python3 webui.py --model_path pretrained_models/SoulX-Podcast-1.7B-dialect
+本项目站在巨人的肩膀上，衷心感谢：
 
+- **[Soul-AILab/SoulX-Podcast](https://github.com/Soul-AILab/SoulX-Podcast)** —— 本项目的核心引擎与模型完全来自 SoulX-Podcast，是其官方推理代码的二次开发发行版。没有原项目的杰出工作（论文：[SoulX-Podcast: Towards Realistic Long-form Podcasts with Dialectal and Paralinguistic Diversity](https://arxiv.org/abs/2510.23541)），就没有 Easy-Podcast。所有模型能力的荣誉属于原作者团队，使用中遇到模型本身的问题请优先到[原项目](https://github.com/Soul-AILab/SoulX-Podcast/issues)反馈。
+- **[FlashCosyVoice](https://github.com/xingchensong/FlashCosyVoice)** —— SoulX-Podcast 上游受益的项目，同样致敬。
 
-```
+## 📄 开源协议
 
+本项目基于 [Apache License 2.0](LICENSE) 开源。
 
-## TODOs
-- [x] Add example scripts for monologue TTS.
-- [x] Publish the [technical report](https://arxiv.org/pdf/2510.23541).
-- [x] Develop a WebUI for easy inference.
-- [x] Deploy an online demo on [Hugging Face Spaces](https://huggingface.co/Soul-AILab/spaces).
-- [x] Dockerize the project with vLLM support.
-- [ ] Add support for streaming inference.
+- Easy-Podcast 是 SoulX-Podcast（Apache 2.0）的衍生项目，依据 Apache 2.0 协议第 4 条，本项目完整保留了原始许可证与版权声明；
+- 相对上游的主要改动：新增 Web 服务与工作台（`server/`、`run_server.py`）、任务式 API 与显存管理、Agent 客户端（`agent_client.py`）、模型下载脚本（`download_models.py`）及文档；
+- 模型权重与核心推理引擎版权归 **Soul-AILab** 所有，Easy-Podcast 自身新增代码同样以 Apache 2.0 发布。
 
-## Citation
+## 📚 引用
+
+如果你使用了本项目，请务必引用原始工作：
 
 ```bibtex
 @misc{SoulXPodcast,
@@ -199,47 +124,21 @@ python3 webui.py --model_path pretrained_models/SoulX-Podcast-1.7B-dialect
   archivePrefix={arXiv},
   url          = {https://arxiv.org/abs/2510.23541}
 }
-
 ```
 
-## License
+## ⚠️ 使用声明
 
-We use the Apache 2.0 license. Researchers and developers are free to use the codes and model weights of our SoulX-Podcast. Check the license at [LICENSE](LICENSE) for more details.
+本项目提供具备零样本音色克隆能力的语音合成模型，旨在用于学术研究、教育目的及合法应用（如个性化语音合成、辅助技术、语言学研究）。
 
+请注意：
 
-## Acknowledge
-- This repo benefits from [FlashCosyVoice](https://github.com/xingchensong/FlashCosyVoice/tree/main)
+- 禁止将本模型用于未经授权的音色克隆、冒充他人、欺诈、诈骗、深度伪造或任何违法活动；
+- 使用本模型时请遵守当地法律法规，恪守道德标准；
+- 开发者不对本模型的任何滥用承担责任；
+- 我们倡导负责任的 AI 开发与使用，鼓励社区在 AI 研究和应用中坚持安全与伦理原则。
 
+## 🔗 相关链接
 
-##  Usage Disclaimer
-This project provides a speech synthesis model for podcast generation capable of zero-shot voice cloning, intended for academic research, educational purposes, and legitimate applications, such as personalized speech synthesis, assistive technologies, and linguistic research.
-
-Please note:
-
-Do not use this model for unauthorized voice cloning, impersonation, fraud, scams, deepfakes, or any illegal activities.
-
-Ensure compliance with local laws and regulations when using this model and uphold ethical standards.
-
-The developers assume no liability for any misuse of this model.
-
-We advocate for the responsible development and use of AI and encourage the community to uphold safety and ethical principles in AI research and applications. If you have any concerns regarding ethics or misuse, please contact us.
-
-## Contact Us
-If you are interested in leaving a message to our work, feel free to email hkxie@mail.nwpu.edu.cn or linhaopeng@soulapp.cn or lxie@nwpu.edu.cn or wangxinsheng@soulapp.cn
-
-You’re welcome to join our WeChat group for technical discussions, updates.
-<p align="center">
-  <!-- <em>Due to group limits, if you can't scan the QR code, please add my WeChat for group access  -->
-      <!-- : <strong>Tiamo James</strong></em> -->
-  <br>
-  <span style="display: inline-block; margin-right: 10px;">
-    <img src="assets/wechat-5.jpg" width="300" alt="WeChat Group QR Code"/>
-  </span>
-  <!-- <span style="display: inline-block;">
-    <img src="assets/wechat_tiamo.jpg" width="300" alt="WeChat QR Code"/>
-  </span> -->
-</p>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Soul-AILab/SoulX-Podcast&type=date&legend=top-left)](https://www.star-history.com/#Soul-AILab/SoulX-Podcast&type=date&legend=top-left)
+- 原项目主页：https://github.com/Soul-AILab/SoulX-Podcast
+- 在线 Demo：https://huggingface.co/Soul-AILab/spaces
+- 技术报告：https://arxiv.org/abs/2510.23541
