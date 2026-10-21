@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoulX-Podcast 工作台</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--border:#2d3748;
+  --text:#e6edf3;--muted:#8b949e;--accent:#7c5cff;--accent2:#38bdf8;
+  --ok:#3fb950;--warn:#d29922;--err:#f85149;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding:20px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+h1 .logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;font-size:15px}
+.hint{color:var(--muted);font-size:12px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;border:1px solid var(--border);background:var(--bg2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.err{background:var(--err)}.dot.busy{background:var(--accent2);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.cols{display:grid;grid-template-columns:minmax(340px,5fr) minmax(380px,7fr);gap:16px;align-items:start}
+@media(max-width:960px){.cols{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.card h2{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card h2 .sub{font-weight:400;color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);cursor:pointer;transition:.15s;color:var(--muted)}
+.tab.active{background:linear-gradient(135deg,rgba(124,92,255,.25),rgba(56,189,248,.15));border-color:var(--accent);color:var(--text);font-weight:600}
+.speaker{border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;background:var(--bg3)}
+.speaker .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.speaker .head b{font-size:13px;color:var(--accent2)}
+.drop{border:1.5px dashed var(--border);border-radius:8px;padding:10px;text-align:center;cursor:pointer;color:var(--muted);font-size:12px;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--text)}
+.drop .fname{color:var(--accent2);word-break:break-all;display:block;margin-top:4px;font-size:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:120px}
+label.f{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
+textarea,input[type=text],input[type=number],select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 10px;font-size:13px;font-family:inherit;outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--accent)}
+textarea{resize:vertical}
+textarea.mono{font-family:Consolas,monospace;line-height:1.8}
+button{cursor:pointer;border:none;border-radius:8px;font-size:13px;font-family:inherit;transition:.15s;padding:8px 14px}
+.btn{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#5a3fd6);color:#fff;font-weight:600;padding:12px;width:100%;font-size:15px;border-radius:10px}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn.primary:disabled{filter:grayscale(.6);cursor:not-allowed;opacity:.7}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn.danger:hover{border-color:var(--err);color:var(--err)}
+.btn.ok{border-color:var(--ok);color:var(--ok)}
+.chip{background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--muted)}
+.chip:hover{border-color:var(--accent2);color:var(--accent2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+audio{width:100%;margin-top:8px;height:36px}
+details{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:10px;background:var(--bg3)}
+summary{cursor:pointer;font-size:13px;color:var(--muted)}
+summary b{color:var(--text)}
+.statusline{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}
+.statusline.err{color:var(--err)}
+.statusline.ok{color:var(--ok)}
+.kv{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed var(--border)}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--muted)}
+.vbar{height:8px;border-radius:99px;background:var(--bg);border:1px solid var(--border);overflow:hidden;margin:8px 0 2px}
+.vbar>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:.4s}
+.exlist .ex{padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:.15s;font-size:12px}
+.exlist .ex:hover{border-color:var(--accent);background:var(--bg3)}
+.exlist .ex b{display:block;font-size:13px;margin-bottom:2px}
+.example-audio{width:26px;height:26px}
+#genProg{display:none;margin-top:10px}
+.progress{height:6px;border-radius:99px;background:var(--bg);overflow:hidden;border:1px solid var(--border)}
+.progress>div{height:100%;width:30%;background:linear-gradient(90deg,var(--accent),var(--accent2));animation:ind 1.4s infinite;border-radius:99px}
+@keyframes ind{0%{margin-left:-30%}100%{margin-left:100%}}
+.tagbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.muted{color:var(--muted);font-size:12px}
+a{color:var(--accent2);text-decoration:none}
+.inline-audio{margin-top:6px}
+.speakercnt{display:flex;gap:6px;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="logo">🎙</span>SoulX-Podcast 工作台 <span class="hint">播客级 TTS · 多说话人 · 方言克隆 · 副语言控制</span></h1>
+    <div class="row">
+      <span class="badge" id="stateBadge"><span class="dot" id="stateDot"></span><span id="stateText">检查中…</span></span>
+      <button class="btn sm" onclick="loadModel('base')">加载模型</button>
+      <button class="btn sm danger" onclick="unloadModel()">释放显存</button>
+    </div>
+  </header>
+
+  <div class="cols">
+    <!-- ============ 左列 ============ -->
+    <div>
+      <div class="card">
+        <h2>说话人音色 <span class="sub">参考音频 + 参考文本（1–4 个说话人）</span>
+          <span class="speakercnt" id="spkCnt"></span></h2>
+        <div id="speakers"></div>
+        <div class="row" id="spkBtns">
+          <button class="btn sm" onclick="addSpeaker()">＋ 添加说话人</button>
+          <button class="btn sm" onclick="removeSpeaker()">－ 移除</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>显存监控 <span class="sub" id="idleInfo"></span></h2>
+        <div class="kv"><span class="k">模型状态</span><span id="vmState">-</span></div>
+        <div class="kv"><span class="k">已加载模型</span><span id="vmModel">-</span></div>
+        <div class="kv"><span class="k">已分配 / 总量</span><span id="vmAlloc">-</span></div>
+        <div class="kv"><span class="k">空闲自动释放</span><span id="vmIdle">-</span></div>
+        <div class="vbar"><div id="vmBar"></div></div>
+        <div class="muted" id="vmDevice"></div>
+      </div>
+
+      <div class="card">
+        <h2>官方示例 <span class="sub">点击填充（普通话 / 川 / 粤 / 豫）</span></h2>
+        <div class="exlist" id="examples"><div class="muted">加载中…</div></div>
+      </div>
+    </div>
+
+    <!-- ============ 右列 ============ -->
+    <div>
+      <div class="tabs">
+        <div class="tab active" id="tabPodcast" onclick="setMode('podcast')">🎙 播客对话（多说话人）</div>
+        <div class="tab" id="tabTts" onclick="setMode('tts')">🔊 单人朗读（TTS）</div>
+      </div>
+
+      <div class="card">
+        <h2>合成文本
+          <span class="sub" id="textHint">每行一轮，以 [S1]/[S2] 开头</span></h2>
+        <textarea id="text" class="mono" rows="9" placeholder="[S1] 哈喽，欢迎收听！<|laughter|>&#10;[S2] 大家好呀，今天聊聊 AI。"></textarea>
+        <div class="tagbar" id="tagbar">
+          <span class="muted">插入：</span>
+          <span class="chip" onclick="ins('[S1] ')">[S1]</span>
+          <span class="chip" onclick="ins('[S2] ')">[S2]</span>
+          <span class="chip" onclick="ins('[S3] ')">[S3]</span>
+          <span class="chip" onclick="ins('[S4] ')">[S4]</span>
+          <span class="chip" onclick="ins('<|laughter|>')">😄 笑声</span>
+          <span class="chip" onclick="ins('<|sigh|>')"> sigh 叹气</span>
+          <span class="chip" onclick="ins('<|breathing|>')">呼吸</span>
+          <span class="chip" onclick="ins('<|coughing|>')">咳嗽</span>
+          <span class="chip" onclick="ins('<|throat_clearing|>')">清嗓</span>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn sm" onclick="loadTextFile()">📂 从 txt 导入</button>
+          <input type="file" id="textFile" accept=".txt" style="display:none" onchange="readTextFile(this)">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>生成参数</h2>
+        <div class="grid3">
+          <div><label class="f">Seed（种子）</label><input type="number" id="seed" value="1988"></div>
+          <div><label class="f">temperature</label><input type="number" id="temperature" value="0.6" step="0.05" min="0.01" max="2"></div>
+          <div><label class="f">repetition_penalty</label><input type="number" id="repetition_penalty" value="1.25" step="0.05"></div>
+          <div><label class="f">top_k</label><input type="number" id="top_k" value="100" step="5"></div>
+          <div><label class="f">top_p</label><input type="number" id="top_p" value="0.9" step="0.05" max="1"></div>
+          <div>
+            <label class="f">生成后显存策略</label>
+            <select id="unload">
+              <option value="auto">auto — 空闲后自动释放</option>
+              <option value="immediate">immediate — 立即释放</option>
+              <option value="keep">keep — 保持常驻</option>
+            </select>
+          </div>
+        </div>
+        <details>
+          <summary>模型与高级选项</summary>
+          <div class="grid2" style="margin-top:8px">
+            <div>
+              <label class="f">模型</label>
+              <select id="model">
+                <option value="auto">auto — 按需自动选择/切换</option>
+                <option value="base">base — SoulX-Podcast-1.7B</option>
+                <option value="dialect">dialect — 1.7B-dialect（方言增强）</option>
+              </select>
+            </div>
+          </div>
+          <div class="muted" style="margin-top:6px">方言提示（&lt;|Sichuan|&gt;/&lt;|Yue|&gt;/&lt;|Henan|&gt;）会自动切换到 dialect 模型。</div>
+        </details>
+      </div>
+
+      <div class="card">
+        <button class="btn primary" id="genBtn" onclick="generate()">✨ 开始合成</button>
+        <div id="genProg"><div class="progress"><div></div></div>
+          <div class="statusline" id="genStatus">排队中…</div></div>
+        <div class="statusline" id="genMsg"></div>
+        <div id="result" style="display:none;margin-top:12px">
+          <h2 style="margin:8px 0 6px">合成结果 <span class="sub" id="resultMeta"></span></h2>
+          <audio id="player" controls></audio>
+          <div class="row" style="margin-top:8px">
+            <a class="btn sm" id="dlLink" href="#" download>⬇ 下载 WAV</a>
+            <span class="muted" id="resultFile"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="muted" style="text-align:center;padding:10px 0">
+    API 文档：<a href="/docs" target="_blank">/docs</a> · Agent 客户端：<code>python agent_client.py --help</code>
+  </div>
+</div>
+
+<script>
+let MODE="podcast", SPEAKERS=[], TASK_TIMER=null, EX_AUDIO=[];
+
+const DEFAULT_PROMPT_TEXT = "";
+
+function spkTemplate(i){
+  return {audio_path:"",audio_name:"",prompt_text:"",dialect_prompt:""};
+}
+function renderSpeakers(){
+  const box=document.getElementById("speakers");
+  box.innerHTML="";
+  SPEAKERS.forEach((s,i)=>{
+    const div=document.createElement("div");
+    div.className="speaker";
+    div.innerHTML=`
+      <div class="head"><b>说话人 ${i+1}（S${i+1}）</b>
+        <audio class="example-audio" controls style="display:${s.audio_name?'block':'none'};width:200px;height:28px" src=""></audio></div>
+      <div class="drop" ondragover="dragOver(event,this)" ondragleave="this.classList.remove('over')"
+           ondrop="dropAudio(event,${i})" onclick="pickAudio(${i})">
+        点击或拖拽参考音频（wav/mp3/flac）<span class="fname">${s.audio_name||""}</span>
+      </div>
+      <label class="f">参考文本（音频里说的话，逐字转录）</label>
+      <textarea rows="2" oninput="SPEAKERS[${i}].prompt_text=this.value"
+        placeholder="例：喜欢攀岩、徒步、滑雪的语言爱好者。">${s.prompt_text||""}</textarea>
+      <details><summary>方言提示（可选 · 需 dialect 模型 · 川/粤/豫）</summary>
+        <div class="row" style="margin-top:6px">
+          <select class="grow" id="dialectSel${i}" onchange="fillDialect(${i},this.value)">
+            <option value="">（不使用方言）</option>
+          </select>
+        </div>
+        <label class="f">方言提示文本（须以 &lt;|Sichuan|&gt;/&lt;|Yue|&gt;/&lt;|Henan|&gt; 开头）</label>
+        <textarea rows="2" oninput="SPEAKERS[${i}].dialect_prompt=this.value"
+          placeholder="例：<|Sichuan|>要得要得！巴适得板！">${s.dialect_prompt||""}</textarea>
+      </details>`;
+    box.appendChild(div);
+    if(s.audio_name){const a=div.querySelector("audio");a.src=s.audio_url||"";a.style.display="block";}
+    if(s.audio_name||s.uploading){/* keep */}
+    const sel=div.querySelector(`#dialectSel${i}`);
+    (window._DIALECT_OPTS||[]).forEach((o,j)=>{
+      const opt=document.createElement("option");opt.value=o.value;opt.textContent=o.label;sel.appendChild(opt);
+      if(s.dialect_prompt&&s.dialect_prompt===o.value)sel.value=o.value;
+    });
+    if(s.audio_path)s._resolved=s.audio_path;
+  });
+  document.getElementById("spkCnt").innerHTML=
+    `<button class="btn sm" onclick="addSpeaker()">＋</button><button class="btn sm" onclick="removeSpeaker()">－</button>
+     <span class="muted">${SPEAKERS.length}/4</span>`;
+  document.getElementById("spkBtns").style.display = MODE==="tts" ? "none":"";
+}
+function addSpeaker(){ if(SPEAKERS.length>=4)return; SPEAKERS.push(spkTemplate()); renderSpeakers(); }
+function removeSpeaker(){ if(SPEAKERS.length<=1)return; SPEAKERS.pop(); renderSpeakers(); }
+
+function pickAudio(i){
+  const inp=document.createElement("input");inp.type="file";inp.accept=".wav,.mp3,.flac,.m4a,audio/*";
+  inp.onchange=()=>{ if(inp.files[0]) uploadAudio(inp.files[0], i); };
+  inp.click();
+}
+function dragOver(e,el){e.preventDefault();el.classList.add("over");}
+function dropAudio(e,i){e.preventDefault();const f=e.dataTransfer.files[0];if(f)uploadAudio(f,i);}
+async function uploadAudio(file,i){
+  const fd=new FormData();fd.append("file",file);
+  setStatus(`上传说话人 ${i+1} 音频…`);
+  const r=await fetch("/upload",{method:"POST",body:fd}).then(r=>r.json()).catch(e=>({detail:e}));
+  if(r.detail){setStatus("上传失败: "+r.detail,true);return;}
+  SPEAKERS[i].audio_path=r.audio_path;SPEAKERS[i].audio_name=file.name;SPEAKERS[i].audio_url=r.url;
+  renderSpeakers();setStatus(`说话人 ${i+1} 音频已就绪（${r.size_mb}MB）`,false,true);
+}
+
+async function fillDialect(i, val){
+  if(!val){SPEAKERS[i].dialect_prompt="";renderSpeakers();return;}
+  SPEAKERS[i].dialect_prompt=val;
+  const ta=document.querySelectorAll("#speakers .speaker")[i]?.querySelectorAll("textarea")[1];
+  if(ta)ta.value=val;
+}
+
+function setMode(m){
+  MODE=m;
+  document.getElementById("tabPodcast").classList.toggle("active",m==="podcast");
+  document.getElementById("tabTts").classList.toggle("active",m==="tts");
+  document.getElementById("textHint").textContent = m==="podcast"?
+    "每行一轮，以 [S1]/[S2] 开头":"整段纯文本，单人朗读";
+  if(m==="tts" && SPEAKERS.length>1){SPEAKERS=SPEAKERS.slice(0,1);renderSpeakers();}
+  if(m==="podcast" && SPEAKERS.length<2){SPEAKERS.push(spkTemplate());renderSpeakers();}
+}
+
+function ins(t){
+  const ta=document.getElementById("text");
+  const s=ta.selectionStart||ta.value.length;
+  ta.value=ta.value.slice(0,s)+t+ta.value.slice(ta.selectionEnd||s);
+  ta.focus();ta.selectionStart=ta.selectionEnd=s+t.length;
+}
+function loadTextFile(){document.getElementById("textFile").click();}
+function readTextFile(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{document.getElementById("text").value=rd.result;};rd.readAsText(f,"utf-8");}
+
+function setStatus(msg,isErr=false,ok=false){
+  const el=document.getElementById("genMsg");
+  el.textContent=msg;el.className="statusline"+(isErr?" err":ok?" ok":"");
+}
+
+function buildBody(){
+  const speakers=SPEAKERS.map(s=>({
+    audio_path:s.audio_path||undefined,
+    prompt_text:(s.prompt_text||"").trim(),
+    dialect_prompt:(s.dialect_prompt||"").trim()
+  }));
+  if(speakers.some(s=>!s.audio_path)){setStatus("请为每个说话人提供参考音频",true);return null;}
+  if(speakers.some(s=>!s.prompt_text)){setStatus("请为每个说话人填写参考文本",true);return null;}
+  const body={mode:MODE,text:document.getElementById("text").value.trim(),speakers};
+  if(!body.text){setStatus("请输入合成文本",true);return null;}
+  for(const [k,cast] of [["seed",v=>parseInt(v)],["temperature",parseFloat],["top_k",v=>parseInt(v)],["top_p",parseFloat],["repetition_penalty",parseFloat]]){
+    const v=document.getElementById(k).value;
+    if(v!==""&&!isNaN(v))body[k]=cast(v);
+  }
+  body.unload=document.getElementById("unload").value;
+  body.model=document.getElementById("model").value;
+  if(MODE==="tts")body.text=body.text.replace(/^\[S1\]\s*/,"");
+  return body;
+}
+
+async function generate(){
+  const body=buildBody();if(!body)return;
+  document.getElementById("genBtn").disabled=true;
+  document.getElementById("genProg").style.display="block";
+  document.getElementById("result").style.display="none";
+  setStatus("");
+  try{
+    const r=await fetch("/prompt",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body)}).then(async r=>{const j=await r.json();if(!r.ok)throw new Error(j.detail||r.status);return j;});
+    poll(r.task_id);
+  }catch(e){
+    setStatus("提交失败: "+e.message,true);
+    document.getElementById("genBtn").disabled=false;
+    document.getElementById("genProg").style.display="none";
+  }
+}
+function poll(taskId){
+  clearInterval(TASK_TIMER);
+  const names={queued:"排队中…",running:"生成中（首次需加载模型，约 1-2 分钟）…",done:"完成",error:"失败"};
+  TASK_TIMER=setInterval(async()=>{
+    try{
+      const t=await fetch("/prompt/"+taskId).then(r=>r.json());
+      document.getElementById("genStatus").textContent=names[t.status]||t.status;
+      if(t.status==="done"){
+        clearInterval(TASK_TIMER);
+        document.getElementById("genProg").style.display="none";
+        document.getElementById("genBtn").disabled=false;
+        showResult(t);
+      }else if(t.status==="error"){
+        clearInterval(TASK_TIMER);
+        document.getElementById("genProg").style.display="none";
+        document.getElementById("genBtn").disabled=false;
+        setStatus("生成失败: "+t.error,true);
+      }
+    }catch(e){/* keep polling */}
+  },2000);
+}
+function showResult(t){
+  document.getElementById("result").style.display="block";
+  document.getElementById("player").src="/view?filename="+t.output_filename;
+  document.getElementById("dlLink").href="/view?filename="+t.output_filename;
+  document.getElementById("dlLink").setAttribute("download",t.output_filename);
+  const secs=t.audio_duration_sec;
+  document.getElementById("resultMeta").textContent=
+    `${secs?Math.floor(secs/60)+"分"+Math.round(secs%60)+"秒":""}${t.model_used?" · "+t.model_used:""}${t.elapsed_sec?" · 耗时"+Math.round(t.elapsed_sec)+"s":""}`;
+  document.getElementById("resultFile").textContent=t.output_filename;
+  setStatus("合成完成",false,true);
+}
+
+async function refreshStatus(){
+  try{
+    const s=await fetch("/vram").then(r=>r.json());
+    const st=s.state, dot=document.getElementById("stateDot");
+    dot.className="dot";
+    if(st==="ready"){dot.classList.add("ok");document.getElementById("stateText").textContent="模型就绪";}
+    else if(st==="loading"||st==="generating"){dot.classList.add("busy");document.getElementById("stateText").textContent=st==="loading"?"加载模型中…":"生成中…";}
+    else if(st==="unloaded"){document.getElementById("stateText").textContent="模型未加载（按需自动加载）";}
+    document.getElementById("vmState").textContent={unloaded:"未加载（按需自动加载）",loading:"加载中",ready:"就绪",generating:"生成中"}[st]||st;
+    document.getElementById("vmModel").textContent=s.loaded_model||"-";
+    const v=s.vram||{};
+    if(v.cuda_available){
+      document.getElementById("vmAlloc").textContent=`${v.allocated_gb} GB / ${v.total_gb} GB（保留 ${v.reserved_gb}）`;
+      document.getElementById("vmBar").style.width=Math.min(100,v.reserved_gb/v.total_gb*100)+"%";
+      document.getElementById("vmDevice").textContent=v.device;
+    }else{
+      document.getElementById("vmAlloc").textContent="CUDA 不可用";
+      document.getElementById("vmDevice").textContent="";
+    }
+    const idle=s.idle_seconds;
+    document.getElementById("vmIdle").textContent=
+      idle<0?"常驻（不自动释放）":`空闲 ${idle}s 后自动释放`;
+    document.getElementById("idleInfo").textContent=
+      s.idle_remaining!=null?`距自动释放约 ${s.idle_remaining}s`:"";
+    if(st==="ready"&&s.idle_remaining!=null){
+      document.getElementById("stateText").textContent=`就绪 · ${s.idle_remaining}s 后释放`;
+    }
+  }catch(e){
+    document.getElementById("stateText").textContent="服务未连接";
+    document.getElementById("stateDot").className="dot err";
+  }
+}
+
+async function loadModel(which){
+  setStatus("加载模型中（首次约 1-2 分钟）…");
+  try{
+    await fetch("/vram/load",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:which||"base"})});
+    setStatus("模型已加载",false,true);
+  }catch(e){setStatus("加载失败: "+e.message,true);}
+  refreshStatus();
+}
+async function unloadModel(){
+  try{
+    await fetch("/vram/unload",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
+    setStatus("显存已释放",false,true);
+  }catch(e){setStatus("释放失败: "+e.message,true);}
+  refreshStatus();
+}
+
+async function initExamples(){
+  const [exr,dir,audo]=await Promise.all([
+    fetch("/examples").then(r=>r.json()).catch(()=>({examples:[]})),
+    fetch("/dialect_prompts").then(r=>r.json()).catch(()=>({dialects:{}})),
+    fetch("/sample_audios").then(r=>r.json()).catch(()=>({samples:[]}))
+  ]);
+  // dialect dropdown options: examples from txt + free usage
+  const opts=[];
+  Object.entries(dir.dialects||{}).forEach(([k,lines])=>{
+    lines.forEach((ln,i)=>opts.push({value:ln,label:`${k} 示例${i+1}: ${ln.replace(/<\|[^|]+\|>/,"").slice(0,18)}…`}));
+  });
+  window._DIALECT_OPTS=opts;
+
+  const names={"script_mandarin.json":"普通话双人播客","script_english.json":"English 双人播客",
+    "script_sichuan.json":"四川话播客","script_yue.json":"粤语播客","script_henan.json":"河南话播客"};
+  const box=document.getElementById("examples");
+  box.innerHTML="";
+  (exr.examples||[]).forEach(ex=>{
+    const d=ex.data;
+    const spkNames=Object.keys(d.speakers||{});
+    const turns=(d.text||[]).map(t=>`[${t[0]}] ${t[1].slice(0,30)}…`).join(" / ");
+    const div=document.createElement("div");
+    div.className="ex";
+    div.innerHTML=`<b>${names[ex.name]||ex.name}</b><span class="muted">${spkNames.join(" + ")} · ${turns}</span>`;
+    div.onclick=()=>{
+      SPEAKERS=spkNames.map(n=>({
+        audio_path:d.speakers[n].prompt_audio,
+        audio_name:(d.speakers[n].prompt_audio||"").split("/").pop(),
+        audio_url:"/audio?filename="+(d.speakers[n].prompt_audio||""),
+        prompt_text:d.speakers[n].prompt_text||"",
+        dialect_prompt:d.speakers[n].dialect_prompt||""
+      }));
+      if(MODE==="tts")setMode("podcast");
+      renderSpeakers();
+      document.getElementById("text").value=(d.text||[]).map(t=>`[${t[0]}] ${t[1]}`).join("\n");
+      setStatus(`已加载示例：${names[ex.name]||ex.name}`,false,true);
+    };
+    box.appendChild(div);
+  });
+  renderSpeakers();
+}
+
+(async function init(){
+  if(MODE==="podcast"&&SPEAKERS.length===0){SPEAKERS=[spkTemplate(),spkTemplate()];}
+  try{const s=await fetch("/sample_audios").then(r=>r.json());
+    (s.samples||[]).forEach((sm,i)=>{
+      if(SPEAKERS[i]&&!SPEAKERS[i].audio_path){
+        SPEAKERS[i].audio_path=sm.audio_path;SPEAKERS[i].audio_name=sm.filename;SPEAKERS[i].audio_url=sm.url;
+      }});
+  }catch(e){}
+  renderSpeakers();
+  refreshStatus();setInterval(refreshStatus,3000);
+  initExamples();
+})();
+</script>
+</body>
+</html>
